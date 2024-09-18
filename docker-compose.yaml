@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+  db: 
+    image: postgres
+    environment:
+      POSTGRES_USER: avito
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: avito_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/./init.sql
+      - db_data:/var/lib/postgresql/data
+  app:
+    build: .
+    environment:
+      - SERVER_ADDRESS=0.0.0.0:8080
+      - POSTGRES_CONN=postgres://avito:1234@db:5432/avito_db
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+volumes:
+  db_data:
